@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html style="background-color: aliceblue;"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<script type="text/javascript" async
+	src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async>
+</script>
+      <title> Trabalho de CG </title>
+</head>
+  <body style="padding-left: 5%;padding-right: 5%;background-color: white;margin-left: 2.5%;margin-right: 2.5%;"><div id="MathJax_Message" style="display: none;"></div>
+    <h1 style="text-align:center">A Transformada de Fourier e algumas aplicações</h1>
+
+    <h2> A transformada de Fourier</h2>
+
+    <p>Seja \(f : \mathbb{R} \to \mathbb{C}\), a transformada de Fourier de f é</p>
+    <p style="text-align:center">\[{\hat {f}}(u)=\int _{-\infty }^{\infty }f(x)\ e^{-2\pi ixu}\,dx\]</p>
+    <p>quando essa integral existe.</p><br>
+    <p>Inicialmente, foi pensada como uma generalização das séries de Fourier com funções não periódicas no contexto de achar solução da equação do calor. Fourier foi a fundo nesse estudo das funções períodicas e hipotetizou que todas as funções podem ser escritas como somas de cossenos e senos.</p>
+    <p>A transformada de Fourier tem várias propriedades interessantes. Uma propriedade importante é que as convoluções no domínio de frequência viram multiplicações.Outra se refere ao fato da transformada é uma operação reversível em certas condições, a transformada da transforma retorna a função original, i.e.,</p>
+    <p style="text-align:center">\[f(x) = \int _{-\infty }^{\infty } \hat{f}(u)\ e^{2\pi ixu}\,du\] </p>
+    <p >No caso discreto (construindo a partir de um trem de impulsos para fazer amostragem da função f contínua e variando nas M frequências desejadas), temos</p>
+    <p style="text-align:center">\[{\hat {f}}(m)=\sum _{n=0}^{M-1}f(n)\ e^{\frac{-2\pi imn}{M}}\]</p>
+    <p> e a inversa vai ter um fator escala :</p>
+    <p style="text-align:center">\[f(n)=\frac{1}{M} \sum _{m=0}^{M-1}\hat{f}(m)\ e^{\frac{2\pi imn}{M}}\]</p>
+    <p> No caso bidimensional contínuo, temos uma integral dupla; no caso discreto, são dois somatórios e o fator vira \(\frac{1}{MN}\) na inversão.</p><br>
+
+    <h2>FFT</h2>
+    <p>Vamos supor o contexto da multiplicação de polinômios pra facilitar o raciocínio.</p>
+    <p>Temos 2 polinômios \(A(x)\) e \(B(x)\) de grau \(d\) (potência de 2) e queremos multiplicá-los. Pelo método convencional, isso leva \(O(n^{2})\), pois o k-ésimo coeficiente seria:</p>
+    <p>\[c_{k} = \sum_{i=0}^{k} a_{i}b_{k-i}\]</p>
+    <p>Se amostrarmos 2d pontos em cada um, fazer multiplicação de todos os pontos e fizermos uma interpolação; temos C(x). Mas a amostragem leva \(O(n^{2})\). Mas podemos melhorar a amostragem : separamos os coeficientes(formando polinômio \(P(x)\) pares dos ímpares \(I(x)\) e temos \(A(x) = P(x^{2}) + xI(x^{2})\), o que permitira cair a amostragem para  \(O(n \log{n})\) escolhendo valores iniciais tais que só metade serão necessárias no próximo nível da recursão, e esses valores são as d raízes complexas da unidade; o que coincide com o cálculo da DFT (uou!) e para termos os coeficientes, aplicamos a mesma coisa pois a DFT é inversível, só multiplicar por um fator para normalizar.</p><br>
+    <p>Analisando o caso mais geral, teremos: seja x um array de tamanho N potência de 2 e queremos calcular sua transformada de Fourier discreta (DFT).</p>
+    <p>Matriz transformação sugere a interpretação da transformada de Fourier como uma rotação rígida no espaço</p><br><br>
+    <center> <img src="fft_fluxograma.png"></img> </center>
+    <p>Referências bibliográficas:</p>
+    <ul>
+      <li></li>
+    </ul>
+  </body>
+</html>
