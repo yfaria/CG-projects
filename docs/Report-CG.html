@@ -58,8 +58,31 @@
       f(0) \\ f(1) \\ f(2) \\ \vdots \\ f(N-2) \\ f(N-1)
       \end{pmatrix} = \pmb{W}\pmb{f} \]</p>
     <p>É possível dizer que a matriz \(\pmb{W}\) tem colunas ortogonais (além disso, o determinante é \(\sqrt{N}\), não é tão dificil calcular por ser uma matriz de Vandermonde; por isso algumas abordadens da transformada de Fourier são tanto a direta quanto a inversa com o fator de normalização \(\frac{1}{\sqrt{N}}\)). Assim, uma possível interpretação da DFT é que ocorre uma rotação rígida do array de entrada, que seria a transformação para o espaço de Fourier/de frequência.</p>
-    <h2>A transformada de Fourier no processamento de imagens</h2>
 
+    <h2>A transformada de Fourier no processamento de imagens</h2>
+    <p>Uma das várias aplicações da transformada se resume em tratar a imagem no formato de matriz de intensidades de preto e branco e usá-la como um sinal bidimensional; onde o espaço de frequência vai estar ligado à variação das intensidades tonais na figura : áreas de maior variacão de intensidade tonal serão representadas nas frequências mais altas e as de pouca variação nas frequências mais baixas. No geral, colocamos em grayscale justamente para ter essa informação da variação da tonalidade, mas é possível fazer com a matriz no RGB mesmo (há inclusive formas computacionais bem sofisticadas para isso, como quaterniões por exemplo; entretanto é controverso; vide <a href="https://ieeexplore.ieee.org/document/723451">um artigo sobre o problema da transformada de Fourier numa imagem colorida</a> e <a href="https://stackoverflow.com/questions/9826886/why-fourier-transform-is-not-possible-on-color-images">uma dicussão no Stack Overflow sobre isso<a>).</p>
+    <p>Junto do repositório tem um notebook python com alguns processamentos de imagem. Basicamente, as convoluções circulares que podem ser aplicadas como filtros no domínio da figura podem ser representados como filtros de frequência no espaço de Fourier, sendo uma multiplicação ponto a ponto na matriz com a imagem transformada.</p>
+    <p>A seguir, serão mostrados os exemplos feitos no notebook. Foram implementados os filtros gaussiano e o Butterworth(tem um parâmetro a mais que o gaussiano; pode se comportar como um filtro ideal ou como uma curva suave e próxima da gaussiana).</p>
+    <center> <img src="FFT-1.png"></img></center>
+    <p>Na figura acima, temos à esquerda a imagem original passada para preto e branco; à direita temos um plot do logaritmo das intensidades deslocado para o centro (se não; as extremidades ficam muito representativas e não dá para ter muita noção do que está acontecendo; para fazer o shift, multiplicamos por \((-1)^{x+y}\) cada ponto; para mais informações, ver Gonzales e Woods).</p>
+    <center> <img src="FFT-2.png"></img></center>
+    <p>A imagem acima é resultado da aplicação do filtro gaussiano passa alta (ou seja, passa alta frequências e tira baixas). É natural que esses filtros sejam usados para achar arestas pois as maiores variações de tonalidade, as maiores frequências, ocorrem nas arestas tipicamente. Claramente essa figura não é boa para fazer isso por pegar muito ruído; o ideal seria ter aplicado um blur antes para não pegar tanto ruído. Aplicamos o filtro gausiano no dominio de frequência da primeira imagem, obtendo a imagem da direita à cima, e temos a imagem à esquerda ao fazer a transformada inversa.</p>
+    <center> <img src="FFT-3.png"></img></center>
+    <p>Acima, temos o resultado de somar no domínio de frequência as altas frequências filtradas às frequências originais; que é basicamente amplificar as altas frequências numa figura. Isso é uma forma de aumentar o contraste da figura; dando uma sensação de mais detalhamento. Nessae caso, o resultado não foi tão positivo pois a filtragem das altas frequências não foi tão boa; acabou criando ruido na imagem.</p>
+
+    <center> <img src="FFT-4.png"></img></center>
+    <p>A figura de cima mostra uma imagem com aliasing (isso acontece quando a frequência da amostragem é menor que o dobro da frequência do sinal; no caso de porção da imagem) e o plot da sua transformada de Fourier em escala logaritmica como antes e deslocada.</p>
+    <center> <img src="FFT-5.png"></img></center>
+    <p>Para tentar "maquiar" o aliasing, tentamos aplicar um filtro ideal passa baixa (ou seja, permite passar as frequências mais baixas e atenua as mais altas; causando blur da imagem). Vemos que o aliasing na torre continua visível, mas no telhado da torre é disfarçado. Entretanto, é criado um serrilhado na imagem pois a transformada de Fourier da função retangular é a função \(sinc(\pi x) = \frac{\sin {\pi x}}{\pi x}\). Assim, ao aplicar esse filtro é como se convolucionasse com essa função sinc, causando esse "serrilhado" na imagem.</p>
+    <center> <img src="FFT-6.png"></img></center>
+    <p>Ao usar um filtro passa alta, para achar arestas; temos muito ruído no gramado. Além disso, o aliasing da imagem não está tão bem representado nessa figura, o que dá um sinal de que filtrar as altas frequências realmente não vai tirar todo o aliasing.</p>
+    <center> <img src="FFT-7.png"></img></center>
+    <p>Num último exemplo, temos a figura acima e sua transformada de Fourier.</p>
+    <center> <img src="FFT-8.png"></img></center>
+    <p>Acima, aplicamos um filtro passa-alta gaussiano.</p>
+    <center> <img src="FFT-10.png"></img></center>
+    <p>Se aplicarmos o mesmo que na primeira figura, uma nova figura(a da esquerda); que em comparação à antiga(à direita), tem uma diferença acentuada de tonalidade nas arestas. Essa é a sensação de detalhamento que essa tática dá.</p>
+    
     <br><br><p>Referências bibliográficas:</p>
     <ul>
       <li>GONZALES, Rafael C.; WOODS, Richard E.: Digital Image Processing, 4. ed. Pearson, 2018</li>
