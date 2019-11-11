@@ -1,0 +1,76 @@
+function to_complex(x) {
+    s = new Array(x.length);
+    for (let i = 0; i < x.length; i++)
+	s[i] = {re : x[i], im : 0};
+    return s;
+}
+
+function IBR(N, NU){
+    let x = 0;
+    for (let i = 0; i < NU; i++) {
+	let c = N >> 1;
+	x = (x << 1) + (N - (c << 1));
+	N = c;
+    }
+    return x;
+}
+
+function getRoundSquare(n) {
+    let i = 0;
+    let m = n;
+    while (m != 1) {
+	m = m >> 1;
+        i++;
+    }
+    if (n == (1 << i))
+        return i;
+    return i+1;
+}
+    
+function complexUnityRoots(num) {
+    let W = Array(num);
+    for (let i = 0; i < (num >> 2); i++) {
+	W[i] = [Math.cos(2*Math.PI*i/num), Math.sin(2*Math.PI*i/num)];
+	W[i + (num >> 1)] = [-W[i][0], -W[i][1]];
+	W[i + (num >> 2)] = [-W[i][1], W[i][0]];
+	W[i + (num >> 2) + (num >> 1)] = [-W[i + (num >> 2)][0], -W[i + (num >> 2)][1]];
+    }
+    return [W[0]].concat(W.slice(1).reverse());
+}
+
+function FFT(x) {
+    let N = x.length;
+    y = to_complex(x);
+    console.log(y);
+    let W = complexUnityRoots(N);
+    let NU = getRoundSquare(N);
+    let N2 = N >> 1;
+    let NU1 = NU - 1;
+    let k = 0;
+    for (let l = 0; l < NU; l++) {
+	while (k < N-1) {
+	    for (let i = 0; i < N2; i++) {
+		let M = k >> NU1; // (int(k/2**NU1))
+		let P = IBR(M,NU);
+		let T1 = [W[P][0] * y[k+N2][0] - W[P][1] * y[k+N2][1], W[P][0] * y[k+N2][1] + W[P][1] * y[k+N2][0]];
+		y[k+N2] = [y[k][0] - T1[0], y[k][1] - T1[1]];
+		y[k] = [y[k][0] + T1[0], y[k][1] + T1[1]];
+		k++;
+	    }
+	    k =+ N2;
+	}
+	N2 >>= 1;
+	NU1 -= 1;
+	k = 0;
+    }
+    while (k != N-1) {
+	let i = IBR(k,NU);
+	if (i < k) {
+	    T1 = y[k];
+	    y[k] = y[i];
+	    y[i] = y[k];
+	}
+	k++;
+    }
+    return y;
+}
